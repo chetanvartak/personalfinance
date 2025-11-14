@@ -1,14 +1,20 @@
-from sqlalchemy import Column, Integer, String, CheckConstraint
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
+
 from app.core.database import Base
 
+class InstitutionType(Base):
+    __tablename__ = "institution_types"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(50), unique=True, nullable=False)
 
 class Institution(Base):
-    __tablename__ = 'institutions'
+    __tablename__ = "institutions"
+
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False)
-    type = Column(String(50), nullable=True)
-    website = Column(String(255), nullable=True)
+    institution_type_id = Column(Integer, ForeignKey("institution_types.id"))
+    website = Column(String(255))
 
-    __table_args__ = (
-        CheckConstraint("type IN ('bank','investment','credit','loan','other')", name='institutions_type_check'),
-    )
+    institution_type = relationship("InstitutionType")
+    accounts = relationship("Account", back_populates="institution")
