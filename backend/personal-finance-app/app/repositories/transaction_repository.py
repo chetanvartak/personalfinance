@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from typing import List, Optional
 from app.schemas.transaction import TransactionCreate
 from app.models.transaction import Transaction
@@ -59,8 +59,8 @@ class TransactionRepository:
 
     def search(
         self,
-        start_date: date,
-        end_date: date,
+        start_date: datetime,
+        end_date: datetime,
         account_ids: Optional[List[int]] = None,
         category_ids: Optional[List[int]] = None,
         description: Optional[str] = None,
