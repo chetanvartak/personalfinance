@@ -35,6 +35,6 @@ class Account(AccountInDBBase):
 
 class AccountOut(AccountBase):
     id: int
-
+    user_id: int
     class Config:
         orm_mode = True

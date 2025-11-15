@@ -6,7 +6,7 @@ class UserRepository:
         self.db = db
 
     def create(self, user_create):
-        user = User(username=user_create.username, email=user_create.email, password_hash=getattr(user_create, 'password_hash', getattr(user_create, 'password', None)))
+        user = User(username=user_create.username, email=user_create.email, first_name=user_create.first_name, last_name=user_create.last_name, date_of_birth=user_create.date_of_birth, password_hash=getattr(user_create, 'password_hash', getattr(user_create, 'password', None)))
         self.db.add(user)
         self.db.commit()
         self.db.refresh(user)

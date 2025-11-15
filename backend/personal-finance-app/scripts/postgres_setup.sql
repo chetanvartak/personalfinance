@@ -44,7 +44,7 @@ CREATE TABLE users (
 -- ACCOUNT PROVIDERS (Banks, Credit Cards, Investment Firms)
 CREATE TABLE institutions (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(255) UNIQUE NOT NULL,
     institution_type_id INTEGER REFERENCES institution_types(id),
     website VARCHAR(255)
 );
@@ -55,7 +55,7 @@ CREATE TABLE accounts (
     user_id INTEGER REFERENCES users(id),
     institution_id INTEGER REFERENCES institutions(id),
     account_type_id INTEGER REFERENCES account_types(id),
-    account_name VARCHAR(255),
+    account_name VARCHAR(255) UNIQUE NOT NULL,
     account_number_last4 VARCHAR(4),
     balance NUMERIC(18, 2) DEFAULT 0,
     currency VARCHAR(10) DEFAULT 'USD',
@@ -82,8 +82,6 @@ CREATE TABLE transactions (
     category_id INTEGER REFERENCES categories(id),
     description TEXT,
     related_account_id INTEGER REFERENCES accounts(id),
-    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_transaction UNIQUE (account_id, date, amount, description)
 );
-
-
-

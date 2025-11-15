@@ -12,7 +12,7 @@ class AccountRepository:
 
     def create(self, account_create):
         # account_create may provide `name` (synonym for account_name)
-        account = Account(user_id=account_create.user_id, account_name=getattr(account_create, 'name', None), balance=account_create.balance)
+        account = Account(user_id=account_create.user_id, account_name=account_create.account_name, account_number_last4=account_create.account_number_last4, balance=account_create.balance, opened_date=account_create.opened_date, currency=account_create.currency, status=account_create.status, institution_id=account_create.institution_id, account_type_id=account_create.account_type_id)
         self.db.add(account)
         self.db.commit()
         self.db.refresh(account)
