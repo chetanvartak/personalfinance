@@ -3,6 +3,31 @@ from typing import Optional
 from decimal import Decimal
 from datetime import datetime
 
+# Nested schemas for relationships
+class TransactionTypeForTransaction(BaseModel):
+    id: int
+    name: str
+    class Config:
+        orm_mode = True
+
+class AccountForTransaction(BaseModel):
+    id: int
+    account_name: str
+    class Config:
+        orm_mode = True
+
+class RelatedAccountForTransaction(BaseModel):
+    id: int
+    account_name: str
+    class Config:
+        orm_mode = True
+
+class CategoryForTransaction(BaseModel):
+    id: int
+    name: str
+    class Config:
+        orm_mode = True
+
 # Shared properties
 class TransactionBase(BaseModel):
     date: datetime
@@ -36,5 +61,9 @@ class Transaction(TransactionInDBBase):
 class TransactionOut(TransactionBase):
     id: int
     created_at:  Optional[datetime] = None    
+    account: Optional[AccountForTransaction] = None
+    category: Optional[CategoryForTransaction] = None
+    transaction_type: Optional[TransactionTypeForTransaction] = None
+    related_account: Optional[RelatedAccountForTransaction] = None
     class Config:
         orm_mode = True

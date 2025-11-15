@@ -1,15 +1,15 @@
 from app.models.institution import Institution
-
+from sqlalchemy.orm import joinedload
 
 class InstitutionRepository:
     def __init__(self, db):
         self.db = db
 
     def list_all(self):
-        return self.db.query(Institution).all()
+        return self.db.query(Institution).options(joinedload(Institution.institution_type)).all()
 
     def get(self, institution_id: int):
-        return self.db.query(Institution).filter(Institution.id == institution_id).one_or_none()
+        return self.db.query(Institution).options(joinedload(Institution.institution_type)).filter(Institution.id == institution_id).one_or_none()
 
     def create(self, inst_create):
         website_str = str(inst_create.website) if inst_create.website else None

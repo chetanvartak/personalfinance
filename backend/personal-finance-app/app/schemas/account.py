@@ -3,6 +3,19 @@ from typing import Optional
 from decimal import Decimal
 from datetime import date
 
+# Nested schemas for relationships
+class AccountTypeForAccount(BaseModel):
+    id: int
+    name: str
+    class Config:
+        orm_mode = True
+
+class InstitutionForAccount(BaseModel):
+    id: int
+    name: str
+    class Config:
+        orm_mode = True
+
 # Shared properties
 class AccountBase(BaseModel):
     account_name: Optional[str] = None
@@ -36,5 +49,7 @@ class Account(AccountInDBBase):
 class AccountOut(AccountBase):
     id: int
     user_id: int
+    institution: Optional[InstitutionForAccount] = None
+    account_type: Optional[AccountTypeForAccount] = None
     class Config:
         orm_mode = True

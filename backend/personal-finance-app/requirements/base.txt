@@ -11,3 +11,4 @@ jwt
 pydantic[email]
 pytest
 httpx
+python-multipart

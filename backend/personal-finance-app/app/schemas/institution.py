@@ -1,6 +1,15 @@
 from pydantic import BaseModel, HttpUrl
 from typing import Optional
 
+from app.schemas.account import AccountTypeForAccount
+
+# Nested schemas for relationships
+class InstitutionTypeForInstitution(BaseModel):
+    id: int
+    name: str
+    class Config:
+        orm_mode = True
+
 # Shared properties
 class InstitutionBase(BaseModel):
     name: str
@@ -27,6 +36,6 @@ class Institution(InstitutionInDBBase):
 
 class InstitutionOut(InstitutionBase):
     id: int
-
+    institution_type: Optional[InstitutionTypeForInstitution] = None
     class Config:
         orm_mode = True

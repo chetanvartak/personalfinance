@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from typing import List
+from typing import List, Optional
 from app.schemas.account import AccountOut, AccountCreate, AccountUpdate
 from app.core.database import get_db
 from app.repositories.account_repository import AccountRepository
@@ -12,6 +12,23 @@ def list_accounts(db=Depends(get_db)):
     repo = AccountRepository(db)
     return repo.list_all()
 
+@router.post('/search', response_model=List[AccountOut])
+def search_accounts(
+    institution_id: Optional[int] = None,
+    account_type_id: Optional[int] = None,
+    status: Optional[str] = None,
+    currency: Optional[str] = None,
+    account_name: Optional[str] = None,
+    db=Depends(get_db)
+):
+    repo = AccountRepository(db)
+    return repo.search(
+        institution_id=institution_id,
+        account_type_id=account_type_id,
+        status=status,
+        currency=currency,
+        account_name=account_name
+    )
 
 @router.get('/{account_id}', response_model=AccountOut)
 def get_account(account_id: int, db=Depends(get_db)):
