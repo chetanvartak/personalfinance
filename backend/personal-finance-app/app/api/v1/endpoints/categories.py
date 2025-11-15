@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
 from app.schemas.category import CategoryOut
-from app.schemas.category import CategoryOut
+from app.schemas.category import CategoryCreate
 from app.core.database import get_db
 from app.repositories.category_repository import CategoryRepository
 
@@ -15,7 +15,7 @@ def list_categories(db=Depends(get_db)):
 
 
 @router.post('/', response_model=CategoryOut, status_code=status.HTTP_201_CREATED)
-def create_category(payload: CategoryOut, db=Depends(get_db)):
+def create_category(payload: CategoryCreate, db=Depends(get_db)):
     repo = CategoryRepository(db)
     cat = repo.create(payload)
     return cat
@@ -31,7 +31,7 @@ def get_category(category_id: int, db=Depends(get_db)):
 
 
 @router.put('/{category_id}', response_model=CategoryOut)
-def update_category(category_id: int, payload: CategoryOut, db=Depends(get_db)):
+def update_category(category_id: int, payload: CategoryCreate, db=Depends(get_db)):
     repo = CategoryRepository(db)
     cat = repo.get(category_id)
     if cat is None:

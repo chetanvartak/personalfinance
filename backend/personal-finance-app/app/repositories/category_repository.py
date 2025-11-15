@@ -12,7 +12,7 @@ class CategoryRepository:
         return self.db.query(Category).filter(Category.id == category_id).one_or_none()
 
     def create(self, payload):
-        cat = Category(name=payload.name)
+        cat = Category(name=payload.name, parent_id=payload.parent_id)
         self.db.add(cat)
         self.db.commit()
         self.db.refresh(cat)

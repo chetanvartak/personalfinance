@@ -12,7 +12,7 @@ class TransactionRepository:
         return self.db.query(Transaction).filter(Transaction.id == transaction_id).one_or_none()
 
     def create(self, tx_create):
-        tx = Transaction(account_id=tx_create.account_id, amount=getattr(tx_create, 'amount', None), category=getattr(tx_create, 'category', None), transaction_type=getattr(tx_create, 'transaction_type', None), description=getattr(tx_create, 'description', None), related_account_id=getattr(tx_create, 'related_account_id', None))
+        tx = Transaction(account_id=tx_create.account_id, amount=tx_create.amount, category_id=tx_create.category_id, date=tx_create.date, transaction_type_id=tx_create.transaction_type_id, description=tx_create.description, related_account_id=tx_create.related_account_id)
         self.db.add(tx)
         self.db.commit()
         self.db.refresh(tx)

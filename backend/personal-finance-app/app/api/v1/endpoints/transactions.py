@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
-from app.schemas.transaction import TransactionOut
+from app.schemas.transaction import TransactionOut, TransactionCreate
 from app.core.database import get_db
 from app.repositories.transaction_repository import TransactionRepository
 
@@ -16,23 +16,24 @@ def list_transactions(db=Depends(get_db)):
 def get_transaction(transaction_id: int, db=Depends(get_db)):
     repo = TransactionRepository(db)
     tx = repo.get(transaction_id)
+    if tx is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Transaction not found')
     return tx
 
 
 @router.post('/', response_model=TransactionOut)
-def create_transaction(payload: TransactionOut, db=Depends(get_db)):
+def create_transaction(payload: TransactionCreate, db=Depends(get_db)):
     repo = TransactionRepository(db)
     tx = repo.create(payload)
     return tx
 
 
 @router.put('/{transaction_id}', response_model=TransactionOut)
-def update_transaction(transaction_id: int, payload: TransactionOut, db=Depends(get_db)):
+def update_transaction(transaction_id: int, payload: TransactionCreate, db=Depends(get_db)):
     repo = TransactionRepository(db)
     tx = repo.get(transaction_id)
     if tx is None:
-        from fastapi import HTTPException
-        raise HTTPException(status_code=404, detail='Transaction not found')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Transaction not found')
     updates = payload.dict(exclude_unset=True)
     updated = repo.update(tx, updates)
     return updated
@@ -43,7 +44,6 @@ def delete_transaction(transaction_id: int, db=Depends(get_db)):
     repo = TransactionRepository(db)
     tx = repo.get(transaction_id)
     if tx is None:
-        from fastapi import HTTPException
-        raise HTTPException(status_code=404, detail='Transaction not found')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Transaction not found')
     repo.delete(tx)
     return None

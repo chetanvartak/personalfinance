@@ -22,7 +22,7 @@ class Transaction(Base):
     related_account_id = Column(Integer, ForeignKey("accounts.id"))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    account = relationship("Account", back_populates="transactions", foreign_keys=[account_id])
+    account = relationship("Account", foreign_keys=[account_id])
     related_account = relationship("Account", foreign_keys=[related_account_id])
     transaction_type = relationship("TransactionType")
     category = relationship("Category")

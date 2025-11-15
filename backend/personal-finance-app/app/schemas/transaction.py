@@ -7,9 +7,11 @@ from datetime import datetime
 class TransactionBase(BaseModel):
     date: datetime
     amount: Decimal
+    account_id: int
+    category_id: Optional[int] = None
+    currency: Optional[str] = None
     description: Optional[str] = None
     transaction_type_id: int
-    category_id: Optional[int] = None
     related_account_id: Optional[int] = None
 
 # Properties to receive on item creation
@@ -31,13 +33,8 @@ class TransactionInDBBase(TransactionBase):
 class Transaction(TransactionInDBBase):
     pass
 
-class TransactionOut(BaseModel):
+class TransactionOut(TransactionBase):
     id: int
-    account_id: int
-    category: str
-    amount: float
-    currency: str
-    created_at: datetime
-
+    created_at:  Optional[datetime] = None    
     class Config:
         orm_mode = True
