@@ -8,8 +8,9 @@ const financeApi = axios.create({
 });
 
 export const getAccounts = () => financeApi.get('/accounts/');
-export const getTransactions = () => financeApi.get('/transactions/');
-
+//export const getTransactions = () => financeApi.get('/transactions/');
+export const getFilteredTransactions = (params) =>
+  financeApi.get('/transactions/filtered/', { params });
 // You can add more functions here as you build out the app
 // export const searchTransactions = (params) => financeApi.post('/transactions/search', null, { params });
 // export const createAccount = (accountData) => financeApi.post('/accounts/', accountData);
