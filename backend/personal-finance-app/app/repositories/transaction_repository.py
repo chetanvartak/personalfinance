@@ -1,5 +1,7 @@
 from datetime import date, datetime
 from typing import List, Optional
+
+from sqlalchemy import asc, desc
 from app.schemas.transaction import TransactionCreate
 from app.models.transaction import Transaction
 from sqlalchemy.orm import joinedload
@@ -106,3 +108,39 @@ class TransactionRepository:
         self.db.delete(tx)
         self.db.commit()
         return None
+
+    def list_filtered_transactions(self, page: int, page_size: int, sort_by: str, sort_order: str, search: Optional[str] = None, account_id: Optional[int] = None, category_id: Optional[int] = None, date_from: Optional[datetime] = None, date_to: Optional[datetime] = None):
+        query = self.db.query(Transaction).options(
+            joinedload(Transaction.account),
+            joinedload(Transaction.category),
+            joinedload(Transaction.transaction_type),
+            joinedload(Transaction.related_account)
+        )
+
+        # Filtering
+        if search:
+            query = query.filter(Transaction.description.ilike(f"%{search}%"))
+        if account_id:
+            query = query.filter(Transaction.account_id == account_id)
+        if category_id:
+            query = query.filter(Transaction.category_id == category_id)
+        if date_from:
+            query = query.filter(Transaction.date >= date_from)
+        if date_to:
+            query = query.filter(Transaction.date <= date_to)
+
+        # Sorting
+        sort_column = getattr(Transaction, sort_by)
+        if sort_order == "desc":
+            query = query.order_by(desc(sort_column))
+        else:
+            query = query.order_by(asc(sort_column))
+
+        total = query.count()
+        items = query.offset((page - 1) * page_size).limit(page_size).all()
+        return {
+            "transactions": items,
+            "total": total,
+            "page": page,
+            "page_size": page_size
+        }   

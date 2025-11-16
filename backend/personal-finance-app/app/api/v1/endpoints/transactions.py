@@ -1,23 +1,23 @@
 import codecs
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, status, File
+from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, status, File
 from typing import List, Optional
-from app.schemas.transaction import TransactionOut, TransactionCreate
+from app.schemas.transaction import TransactionListFiltered, TransactionOut, TransactionCreate
 from app.core.database import get_db
 from app.repositories.transaction_repository import TransactionRepository
-from datetime import date
+from datetime import date, datetime
 from app.services.transaction_service import TransactionService
 from typing import IO
 router = APIRouter()
 
-@router.get('/', response_model=List[TransactionOut])
+@router.get('/all', response_model=List[TransactionOut])
 def list_transactions(db=Depends(get_db)):
     repo = TransactionRepository(db)
     return repo.list_all()
 
 @router.post('/search', response_model=List[TransactionOut])
 def search_transactions(
-    start_date: date,
-    end_date: date,
+    start_date: datetime,
+    end_date: datetime,
     account_ids: Optional[List[int]] = None,
     category_ids: Optional[List[int]] = None,
     description: Optional[str] = None,
@@ -32,7 +32,7 @@ def search_transactions(
         description=description
     )
 
-@router.get('/{transaction_id}', response_model=TransactionOut)
+@router.get('/id/{transaction_id}', response_model=TransactionOut)
 def get_transaction(transaction_id: int, db=Depends(get_db)):
     repo = TransactionRepository(db)
     tx = repo.get(transaction_id)
@@ -89,3 +89,31 @@ def import_transactions_from_csv(
     #created_transactions = service.save_imported_transactions(transactions_to_create)
 
     return {"message": f"Successfully imported len(transactions_to_create) transactions."}
+
+
+@router.get("/filtered", response_model=TransactionListFiltered)
+def list_filtered_transactions(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(25, ge=1, le=100),
+    sort_by: str = Query("date", regex="^(date|amount|account_name|category)$"),
+    sort_order: str = Query("desc", regex="^(asc|desc)$"),
+    search: Optional[str] = None,
+    account_id: Optional[int] = None,
+    category_id: Optional[int] = None,
+    date_from: Optional[datetime] = None,
+    date_to: Optional[datetime] = None,
+    db=Depends(get_db)
+):
+    repo = TransactionRepository(db)
+    return repo.list_filtered_transactions(
+        page=page,
+        page_size=page_size,
+        sort_by=sort_by,
+        sort_order=sort_order,
+        search=search,
+        account_id=account_id,
+        category_id=category_id,
+        date_from=date_from,
+        date_to=date_to
+    )    
+

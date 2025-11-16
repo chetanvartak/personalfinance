@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import List, Optional
 from decimal import Decimal
 from datetime import datetime
 
@@ -58,12 +58,24 @@ class TransactionInDBBase(TransactionBase):
 class Transaction(TransactionInDBBase):
     pass
 
-class TransactionOut(TransactionBase):
+class TransactionBaseOut(TransactionBase):
     id: int
     created_at:  Optional[datetime] = None    
     account: Optional[AccountForTransaction] = None
     category: Optional[CategoryForTransaction] = None
     transaction_type: Optional[TransactionTypeForTransaction] = None
     related_account: Optional[RelatedAccountForTransaction] = None
+
+class TransactionOut(TransactionBaseOut):
+
     class Config:
         orm_mode = True
+
+class TransactionListFiltered(BaseModel):
+    transactions: List[TransactionBaseOut]
+    total: int
+    page: int
+    page_size: int
+
+    class Config:
+        orm_mode = True    
