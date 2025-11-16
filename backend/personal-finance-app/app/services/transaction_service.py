@@ -49,8 +49,8 @@ class TransactionService:
                     amount=abs(amount),  # Store amount as a positive value
                     transaction_type_id=transaction_type,
                     # category_id can be set to a default or determined by rules
-                    category_id=None,
-                    related_account_id=None,
+                    category_id=1,
+                    related_account_id=None,                    
                 )
                 transactions_to_create.append(tx_create)
             except (KeyError, ValueError) as e:

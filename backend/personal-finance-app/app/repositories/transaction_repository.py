@@ -44,7 +44,10 @@ class TransactionRepository:
             A list of the created transaction objects.
         """
         transactions = [Transaction(**tx.model_dump()) for tx in transactions_to_create]
+        # Add each transaction individually
+
         self.db.add_all(transactions)
+        
         self.db.commit()
         # Note: self.db.refresh() does not work on a list.
         # The objects in the 'transactions' list are updated with IDs by SQLAlchemy.

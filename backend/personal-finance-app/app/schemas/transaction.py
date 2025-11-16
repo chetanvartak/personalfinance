@@ -34,7 +34,6 @@ class TransactionBase(BaseModel):
     amount: Decimal
     account_id: int
     category_id: Optional[int] = None
-    currency: Optional[str] = None
     description: Optional[str] = None
     transaction_type_id: int
     related_account_id: Optional[int] = None

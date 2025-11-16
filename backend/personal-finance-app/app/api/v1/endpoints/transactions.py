@@ -1,4 +1,6 @@
 import codecs
+import csv
+import io
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, status, File
 from typing import List, Optional
 from app.schemas.transaction import TransactionListFiltered, TransactionOut, TransactionCreate
@@ -81,14 +83,22 @@ def import_transactions_from_csv(
     repo = TransactionRepository(db)
     service = TransactionService(repo)
     
+    # Read and decode the file content
+    content = file.file.read().decode('utf-8')
+    # Create a StringIO object to simulate a file for csv.DictReader
+    csv_file = io.StringIO(content)
+    #reader = csv.DictReader(csv_file)
+    
+    transactions_to_create = service.import_from_csv(csv_file, account_id)
+    txns = repo.bulk_create(transactions_to_create)
     # The service parses the file and prepares the data
-    csv_reader = codecs.iterdecode(file.file, 'utf-8')
+    #csv_reader = codecs.iterdecode(file.file, 'utf-8')
     #transactions_to_create = service.import_from_csv(csv_reader, account_id)
 
     # The service saves the prepared data using the repository's bulk method
     #created_transactions = service.save_imported_transactions(transactions_to_create)
 
-    return {"message": f"Successfully imported len(transactions_to_create) transactions."}
+    return {"message": f"Successfully imported {len(txns)} transactions."}
 
 
 @router.get("/filtered", response_model=TransactionListFiltered)

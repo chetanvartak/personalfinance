@@ -40,3 +40,32 @@ c:\Program Files\PostgreSQL\17\bin\pg_dump -U postgres -h localhost -p 5432 --sc
 
 Execute SQL
 c:\Program Files\PostgreSQL\17\bin\psql  -U postgres -h localhost -p 5432 --schema personalfinance
+
+Debugging in VSCode
+open main.py as active tab.
+
+update .vscode/laumnch.json
+```json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug FastAPI",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "app.main:app",
+                "--reload",
+                "--port", "8000",
+                "--env-file", ".env.dev"
+            ],
+            "env": {
+                // Add other environment variables if needed
+            }
+        }
+    ]
+}
+```
+Select the option for debugging: Python Debugger: Debug using launch.json
+Select the "Debug FastAPI" configuration from the dropdown to start debugging.
