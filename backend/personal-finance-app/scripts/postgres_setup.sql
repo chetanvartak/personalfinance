@@ -85,3 +85,19 @@ CREATE TABLE transactions (
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT uq_transaction UNIQUE (account_id, date, amount, description)
 );
+
+CREATE TABLE merchant (
+    id SERIAL PRIMARY KEY,                       -- Auto-incrementing ID
+    merchant_name VARCHAR(100) NOT NULL UNIQUE,  -- The extracted standard merchant name
+    default_category_id INTEGER REFERENCES categories(id),
+    default_account_id INTEGER REFERENCES accounts(id),
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,  -- When this merchant was added
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE merchant_description (
+    id SERIAL PRIMARY KEY,
+    merchant_id INTEGER NOT NULL REFERENCES merchant(id) ON DELETE CASCADE,
+    description VARCHAR(200) NOT NULL,           -- Raw description text as seen in transactions
+    UNIQUE(merchant_id, description)             -- Prevent duplicates
+);

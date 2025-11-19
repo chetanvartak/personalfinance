@@ -25,7 +25,7 @@ python scripts/seed_data.py
 uvicorn app.main:app --reload --port 8000 --env-file .env.dev
 ```
 
-API root: http://localhost:8000/api/v1/
+API root: http://localhost:8000/docs/
 
 This repo contains placeholder implementations. Replace with production-ready
 logic (password hashing, migrations, real database, tests, CI) before deploying.

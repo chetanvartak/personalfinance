@@ -17,3 +17,6 @@ personal_finance.db
 # Pytest
 htmlcov/
 .coverage
+
+# SampleData
+sampledata/

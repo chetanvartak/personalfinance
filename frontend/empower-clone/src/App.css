@@ -1,0 +1,42 @@
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f7fafc;
+  margin: 0;
+  color: #22223b;
+}
+
+.app-layout {
+  display: flex;
+}
+
+.sidebar {
+  width: 280px;
+  background: #f1f5f9;
+  padding: 2rem 1rem;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+}
+
+.account-group h4 {
+  margin: 1.4rem 0 0.7rem;
+  color: #2563eb;
+}
+
+.balance {
+  float: right;
+  font-weight: bold;
+  color: #059669;
+}
+
+.overview {
+  flex: 1;
+  padding: 2rem 3rem;
+  background: #fff;
+}
+
+.net-worth-section, .transactions-section {
+  margin-bottom: 2rem;
+  background: #f9fafb;
+  padding: 1.5rem;
+  border-radius: 18px;
+  box-shadow: 0 1px 4px rgba(60, 64, 67, .04);
+}

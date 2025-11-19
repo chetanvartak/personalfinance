@@ -1,0 +1,17 @@
+.transactions-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+.transactions-table th, .transactions-table td {
+  text-align: left;
+  padding: .5rem .75rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+.transactions-table .negative {
+  color: #ef4444;
+}
+.transactions-table .positive {
+  color: #059669;
+}
+

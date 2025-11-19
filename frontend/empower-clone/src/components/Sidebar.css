@@ -1,0 +1,11 @@
+.sidebar {
+  border-right: 1px solid #e5e7eb;
+}
+.account-group ul {
+  list-style: none;
+  padding: 0;
+  margin: .2rem 0 1rem 0;
+}
+.account-group li {
+  padding: .33rem 0;
+}

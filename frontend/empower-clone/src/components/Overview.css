@@ -1,0 +1,36 @@
+/* Basic layout styles for the Overview component */
+.overview {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.net-worth-section,
+.transactions-section {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.net-worth-section h3,
+.transactions-section h3 {
+  margin: 0 0 12px 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+@media (min-width: 800px) {
+  .overview {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .net-worth-section {
+    flex: 1 1 60%;
+  }
+  .transactions-section {
+    flex: 1 1 40%;
+  }
+}
