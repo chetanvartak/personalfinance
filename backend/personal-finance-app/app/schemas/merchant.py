@@ -48,7 +48,7 @@ class MerchantBaseOut(MerchantBase):
     updated_at:  Optional[datetime] = None
     default_account: Optional[AccountForMerchant] = None
     default_category: Optional[CategoryForMerchant] = None
-    descriptions: Optional[List["MerchantDescription"]] = None
+    descriptions: Optional[List["MerchantDescriptionOut"]] = None
 
 class MerchantOut(MerchantBaseOut):
 
@@ -65,8 +65,10 @@ class MerchantListFiltered(BaseModel):
         orm_mode = True    
 
 class MerchantDescriptionBase(BaseModel):
-    merchant_id: int
     description: str
+
+class MerchantDescriptionOut(MerchantDescriptionBase):
+    merchant_id: int
 
 class MerchantDescriptionCreate(MerchantDescriptionBase):
     pass
