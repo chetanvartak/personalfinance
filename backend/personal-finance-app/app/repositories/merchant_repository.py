@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from sqlalchemy import asc, desc
 from app.schemas.merchant import MerchantCreate
-from app.models.merchant import Merchant
+from app.models.merchant import Merchant, MerchantDescription
 from sqlalchemy.orm import joinedload
 
 class MerchantRepository:
@@ -14,17 +14,34 @@ class MerchantRepository:
     def list_all(self):
         return self.db.query(Merchant).options(
             joinedload(Merchant.default_account),
-            joinedload(Merchant.default_category)
+            joinedload(Merchant.default_category),
+            joinedload(Merchant.descriptions)
         ).all()
 
     def get(self, merchant_id: int):
         return self.db.query(Merchant).options(
             joinedload(Merchant.default_account),
-            joinedload(Merchant.default_category)
+            joinedload(Merchant.default_category),
+            joinedload(Merchant.descriptions)
         ).filter(Merchant.id == merchant_id).one_or_none()
 
     def create(self, merchant_create):
-        merchant = Merchant(merchant_name=merchant_create.merchant_name, default_category_id=merchant_create.default_category_id, default_account_id=merchant_create.default_account_id)
+        merchant = Merchant(
+            merchant_name=merchant_create.merchant_name,
+            default_category_id=merchant_create.default_category_id,
+            default_account_id=merchant_create.default_account_id,
+        )
+
+        # Add any provided descriptions
+        for d in (merchant_create.descriptions or []):
+            # d may be a pydantic model or dict-like
+            if isinstance(d, dict):
+                desc_text = d.get("description")
+            else:
+                desc_text = getattr(d, "description", None)
+            if desc_text:
+                merchant.descriptions.append(MerchantDescription(description=desc_text))
+
         self.db.add(merchant)
         self.db.commit()
         self.db.refresh(merchant)
@@ -40,7 +57,21 @@ class MerchantRepository:
         Returns:
             A list of the created merchant objects.
         """
-        merchants = [Merchant(**merchant.model_dump()) for merchant in merchants_to_create]
+        merchants = []
+        for merchant_schema in merchants_to_create:
+            m = Merchant(
+                merchant_name=merchant_schema.merchant_name,
+                default_category_id=merchant_schema.default_category_id,
+                default_account_id=merchant_schema.default_account_id,
+            )
+            for d in (merchant_schema.descriptions or []):
+                if isinstance(d, dict):
+                    desc_text = d.get("description")
+                else:
+                    desc_text = getattr(d, "description", None)
+                if desc_text:
+                    m.descriptions.append(MerchantDescription(description=desc_text))
+            merchants.append(m)
         # Add each merchant individually
 
         self.db.add_all(merchants)
@@ -54,6 +85,15 @@ class MerchantRepository:
         for key, value in updates.items():
             if hasattr(merchant, key) and value is not None:
                 setattr(merchant, key, value)
+        # Handle nested descriptions if provided
+        if "descriptions" in updates:
+            # Replace existing descriptions with provided list
+            merchant.descriptions[:] = []
+            for d in updates.get("descriptions") or []:
+                desc_text = d.get("description") if isinstance(d, dict) else getattr(d, "description", None)
+                if desc_text:
+                    merchant.descriptions.append(MerchantDescription(description=desc_text))
+
         self.db.add(merchant)
         self.db.commit()
         self.db.refresh(merchant)
@@ -95,6 +135,7 @@ class MerchantRepository:
         return query.options(
             joinedload(Merchant.default_account),
             joinedload(Merchant.default_category),
+            joinedload(Merchant.descriptions)
         ).all()
 
     def delete(self, tx: Merchant):
@@ -130,8 +171,8 @@ class MerchantRepository:
         total = query.count()
         items = query.offset((page - 1) * page_size).limit(page_size).all()
         return {
-            "transactions": items,
+            "merchants": items,
             "total": total,
             "page": page,
             "page_size": page_size
-        }   
+        }

@@ -24,11 +24,13 @@ class MerchantBase(BaseModel):
 
 # Properties to receive on item creation
 class MerchantCreate(MerchantBase):
-    pass
+    # Optional list of merchant descriptions to create together with the merchant
+    descriptions: Optional[List["MerchantDescriptionCreate"]] = None
 
 # Properties to receive on item update
 class MerchantUpdate(MerchantBase):
-    pass
+    # Optional list of merchant descriptions to create/update together with the merchant
+    descriptions: Optional[List["MerchantDescriptionCreate"]] = None
 
 # Properties shared by models stored in DB
 class MerchantInDBBase(MerchantBase):
@@ -46,6 +48,7 @@ class MerchantBaseOut(MerchantBase):
     updated_at:  Optional[datetime] = None
     default_account: Optional[AccountForMerchant] = None
     default_category: Optional[CategoryForMerchant] = None
+    descriptions: Optional[List["MerchantDescription"]] = None
 
 class MerchantOut(MerchantBaseOut):
 
@@ -78,3 +81,11 @@ class MerchantDescriptionInDBBase(MerchantDescriptionBase):
 
 class MerchantDescription(MerchantDescriptionInDBBase):
     pass     
+
+# Resolve forward references for Pydantic models that reference each other by string
+MerchantCreate.update_forward_refs()
+MerchantUpdate.update_forward_refs()
+MerchantBaseOut.update_forward_refs()
+MerchantOut.update_forward_refs()
+MerchantDescriptionCreate.update_forward_refs()
+MerchantDescription.update_forward_refs()

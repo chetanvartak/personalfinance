@@ -13,9 +13,9 @@ class Merchant(Base):
     default_account_id = Column(Integer, ForeignKey("accounts.id"))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now())
-
-    account = relationship("Account", foreign_keys=[default_account_id])
-    category = relationship("Category", foreign_keys=[default_category_id]) 
+    # Relationship attribute names use the "default_" prefix to match schema expectations
+    default_account = relationship("Account", foreign_keys=[default_account_id])
+    default_category = relationship("Category", foreign_keys=[default_category_id])
     descriptions = relationship("MerchantDescription", back_populates="merchant", cascade="all, delete-orphan")
 
 class MerchantDescription(Base):

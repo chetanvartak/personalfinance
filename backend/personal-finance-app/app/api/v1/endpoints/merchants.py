@@ -3,7 +3,7 @@ import csv
 import io
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, status, File
 from typing import List, Optional
-from app.schemas.merchant import MerchantListFiltered, MerchantOut, MerchantCreate
+from app.schemas.merchant import MerchantListFiltered, MerchantOut, MerchantCreate, MerchantUpdate
 from app.core.database import get_db
 from app.repositories.merchant_repository import MerchantRepository
 from datetime import date, datetime
@@ -33,7 +33,7 @@ def create_merchant(payload: MerchantCreate, db=Depends(get_db)):
     merchant = repo.create(payload)
     return merchant
 @router.put('/{merchant_id}', response_model=MerchantOut)
-def update_merchant(merchant_id: int, payload: MerchantCreate, db=Depends(get_db)):
+def update_merchant(merchant_id: int, payload: MerchantUpdate, db=Depends(get_db)):
     repo = MerchantRepository(db)
     merchant = repo.get(merchant_id)
     if merchant is None:
